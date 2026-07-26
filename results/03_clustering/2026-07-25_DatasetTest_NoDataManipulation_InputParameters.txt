@@ -1,0 +1,14 @@
+
+Using :
+- Data file (--file) : NormalizedExpressionData_OutputStep3.tsv 
+- Metadata file containing tumor of origin or other cell features(--metadata) : CellMetadata.csv 
+- OutputFolder (--out) : . 
+
+Other parameters :
+- Type of analysis (--analysis_name) : NoDataManipulation 
+- Name of dataset (--dataset) : DatasetTest 
+- Number of principal components considered for grouping analyses  (--numberPCsToUseForClustering) : 10 
+- Column name corresponding to tumor identity (--tumor) : Sample.name 
+- Color assigned to each tumor (--tumorColor) : black,green,orange,pink 
+- Should tSNE be run (TRUE = Yes and FALSE  = No) (--tsne) : FALSE 
+- Should UMAP be run (TRUE = Yes and FALSE  = No) (--UMAP) : TRUE 
