@@ -3,4 +3,5 @@ Tumor cells from different patients frequently cluster according to their tumor 
 The workflow consists of modular steps shown in the scheme below that can be applied independently or combined into a complete analytical pipeline. It is designed for users with varying levels of computational experience and can be adapted to diverse cancer scRNA-seq datasets.
 This workflow was developed to support reproducible analyses of cancer single-cell transcriptomes and to facilitate systematic investigation of patient-specific transcriptional identities encoded across the malignant cell transcriptome.
 
-[STARProtocols_Figure1.pdf](https://github.com/user-attachments/files/30567167/STARProtocols_Figure1.pdf)
+<img width="965" height="625" alt="Screenshot 2026-07-30 at 20 32 06" src="https://github.com/user-attachments/assets/7dae3dcf-5cf7-405d-b82d-f25cfadf9f72" />
+
