@@ -9,7 +9,7 @@
 ## Rscript ran on 4.2.0
 
 # Example of command (that generates output files) :
-# Rscript DefiningMetacells.R --file NormalizedExpressionData_OutputStep3.tsv --metadata CellMetadata.csv --metadata_sep , --analysis_name MetacellIdentification --dataset DatasetTest --corrMethod pearson --clustMethod ward.D2 --tumorColor black,green,orange,pink
+# Rscript DefiningMetacells.R --file NormalizedExpressionData_OutputStep3.tsv --metadata CellMetadata.csv --metadata_sep "," --analysis_name MetacellIdentification --dataset DatasetTest --corrMethod pearson --clustMethod ward.D2 --tumorColor black,green,orange,pink
 
 # Load necessary packages (install them if it's not the case)
 requiredPackages <- c('optparse',
