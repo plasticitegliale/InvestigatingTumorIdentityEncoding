@@ -9,7 +9,7 @@
 ## Rscript ran on 4.2.0
 
 # Example of command (that generates output files) :
-# Rscript DataNormalizationByHKG.R --file NormalizedExpressionData_OutputStep3.tsv --dataset DatasetTest --analysis_name Test_NormalizeByHKGPerMetacell --NormalizationGroup Metacell --HKG 2026-07-25_DatasetTest_HKGidentification_CandidateHKGgroup177_.csv --HKG_sep , --metadata MetacellGroups.csv --metadata_sep ,
+# Rscript DataNormalizationByHKG.R --file NormalizedExpressionData_OutputStep3.tsv --dataset DatasetTest --analysis_name Test_NormalizeByHKGPerMetacell --NormalizationGroup Metacell --HKG 2026-07-25_DatasetTest_HKGidentification_CandidateHKGgroup177_.csv --HKG_sep , --metadata MetacellGroups.csv --metadata_sep ","
 
 # Load necessary packages (install them if it's not the case)
 requiredPackages <- c('optparse',
