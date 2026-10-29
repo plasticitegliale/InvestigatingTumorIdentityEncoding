@@ -12,7 +12,7 @@
 # Output files include the new expression matrices, which can be used as input for grouping analyses.
 
 # Example of command (that generates output files) :
-### Rscript DataPreparationForGroupingAnalyses.R --file NormalizedExpressionData_OutputStep3.tsv --file_sep \t --dataset DatasetTest --out . --analysis_name BinarizedData --binarize TRUE
+### Rscript DataPreparationForGroupingAnalyses.R --file NormalizedExpressionData_OutputStep3.tsv --file_sep "\t" --dataset DatasetTest --out . --analysis_name BinarizedData --binarize TRUE
 
 # Load necessary packages (install them if not installed)
 requiredPackages <- c('optparse', 'Hmisc')
