@@ -19,6 +19,9 @@ Variables <- list(
   # Name given to the current analysis
   analysis_name = "DropoutImputation",
   
+  # dropout-probability threshold
+  dropout_threshold = 0.75, 
+  
   # Details about the dataset under study that should appear in the output file names
   dataset = "DatasetTest",
   
@@ -42,6 +45,10 @@ save_csv <- function(dataframe_to_save, OutputNameFile) {
             file = paste(prefix, OutputNameFile, ".csv", sep = "_"))
 }
 
+# Download the DropoutImputation_functions.R Rscript from https://github.com/plasticitegliale/InvestigatingTumorIdentityEncoding and put in the working directory
+wget https://raw.githubusercontent.com/plasticitegliale/InvestigatingTumorIdentityEncoding/main/scripts/02_preparation/DropoutImputation_functions.R \
+     -O DropoutImputation_functions.R
+
 # import functions for scImpute
 source("DropoutImputation_functions.R")
 
@@ -61,7 +68,8 @@ count_lnorm[count_lnorm == 0] <- log10(1.01)
 
 # Run imputation of dropout events
 res_imp <- imputation_model8(count = count_lnorm, labeled = FALSE, 
-                             point = log10(1.01), drop_thre = 0.75,
+                             point = log10(1.01),
+                             drop_thre = Variables$dropout_threshold,
                              Kcluster = 1,
                              out_dir = Variables$out, ncores = 10)
 
