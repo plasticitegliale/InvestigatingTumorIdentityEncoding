@@ -5,7 +5,7 @@
 # Transform raw counts into log2(CPM +1)
 
 # Example of command
-# Rscript DataNormalization.R --data ExpressionData.csv --sep , --out NormalizedExpressionData_OutputStep3.tsv
+# Rscript DataNormalization.R --data ExpressionData.csv --sep "," --out NormalizedExpressionData_OutputStep3.tsv
 
 # Load necessary packages (install them if it's not the case)
 requiredPackages = c('optparse')
