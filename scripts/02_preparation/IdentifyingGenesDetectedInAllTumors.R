@@ -22,6 +22,9 @@ Variables <- list(
   
   # Column separator for metadata file
   delimiter = ",", 
+
+  # Percentage of patients in which a gene has to be detected to retain it
+  percentDetection = 100,
   
   # Name of column that contains identity of tumor of origin
   tumor = "Sample.name", 
@@ -62,62 +65,36 @@ for (p in requiredPackages) {
   metadata$CellID <- rownames(metadata)
 
 # Identifying the genes detected in each tumor
-samples <- unique(metadata[, Variables$tumor]) # a vector for unique group numbers
-SampleCells <- lapply(samples, function(x) subset(t(data.normCounts), metadata[, Variables$tumor] ==x))
-
-Genes_detected <- lapply(SampleCells, function(x) (colSums(x != 0)))
-Genes_detected_A <- as.data.frame(Genes_detected)
-colnames(Genes_detected_A) <- samples
-write.csv(Genes_detected_A, file=paste(Sys.Date(), "_Number of cells per tumor in which each gene is detected.csv"))
-
-# Compare list of genes detected in each tumor
-CompareGenes <- list()
-for(i in 1:ncol(Genes_detected_A)){
-  CompareGenes[i] <- list(as.character(rownames(Genes_detected_A[Genes_detected_A[,i] != 0,])))
-}
-
-if(length(CompareGenes)>7){
-  nCompareLists <- length(CompareGenes) / 7
-  if(nCompareLists >1 & nCompareLists <= 2){
-    CompareGenes.venn1 <- venn(CompareGenes[1:7], simplify = FALSE, intersections = TRUE, show.plot=TRUE, zcolor = "style")
-    Intersection1 <- attr(CompareGenes.venn1, "intersections")
-    
-    CompareGenes.venn2 <- venn(CompareGenes[8:length(CompareGenes)], simplify = FALSE, intersections = TRUE, show.plot=TRUE, zcolor = "style")
-    Intersection2 <- attr(CompareGenes.venn2, "intersections")
-    
-    CompareLists <- list()
-    CompareLists["A"] <- Intersection1[length(Intersection1)]
-    CompareLists["B"] <- Intersection2[length(Intersection2)]
-    CompareGenes.venn <- venn(CompareLists, simplify = FALSE, intersections = TRUE, show.plot=TRUE, zcolor = "style")
-    Intersection <- attr(CompareGenes.venn, "intersections")
-  }
+# A gene is considered detected if its expression is nonzero.
+  detected <- data.normCounts != 0
   
-  if(nCompareLists >2 & nCompareLists <= 3){
-    CompareGenes.venn1 <- venn(CompareGenes[1:7], simplify = FALSE, intersections = TRUE, show.plot=TRUE, zcolor = "style")
-    Intersection1 <- attr(CompareGenes.venn1, "intersections")
-    
-    CompareGenes.venn2 <- venn(CompareGenes[8:14], simplify = FALSE, intersections = TRUE, show.plot=TRUE, zcolor = "style")
-    Intersection2 <- attr(CompareGenes.venn2, "intersections")
-    
-    CompareGenes.venn3 <- venn(CompareGenes[15:length(CompareGenes)], simplify = FALSE, intersections = TRUE, show.plot=TRUE, zcolor = "style")
-    Intersection3 <- attr(CompareGenes.venn3, "intersections")
-    
-    CompareLists <- list()
-    CompareLists["A"] <- Intersection1[length(Intersection1)]
-    CompareLists["B"] <- Intersection2[length(Intersection2)]
-    CompareLists["C"] <- Intersection3[length(Intersection3)]
-    CompareGenes.venn <- venn(CompareLists, simplify = FALSE, intersections = TRUE, show.plot=TRUE, zcolor = "style")
-    Intersection <- attr(CompareGenes.venn, "intersections")
-  }
-} else{
-  CompareGenes.venn <- venn(CompareGenes, simplify = FALSE, intersections = TRUE, show.plot=TRUE, zcolor = "style")
-  Intersection <- attr(CompareGenes.venn, "intersections")
-}
+## Tumor identities
+  samples <- unique(as.character(metadata[[Variables$tumor]])) # a vector for unique group numbers
 
-# Get list of genes detected in all tumors
-CommonDetectedGenes <- as.data.frame(Intersection[length(Intersection)])
-colnames(CommonDetectedGenes) <- "gene"
+## Number of cells in each tumor
+  cells_per_tumor <- table(
+    factor(metadata[[Variables$tumor]], levels = samples)
+  )
 
-# Extract expression values of genes detected in all tumors
-data.normCounts <- data.normCounts[rownames(data.normCounts) %in% CommonDetectedGenes$gene,]
-write.csv(data.normCounts, file = paste0(Sys.Date(), "_", Variables$dataset, "_ExpressionDataOf_", Variables$analysis_name, ".csv"))
+## Number of cells in which each gene is detected, per tumor
+  Genes_detected_A <- sapply(samples, function(sample_id) {
+    sample_cells <- rownames(metadata)[as.character(metadata[[Variables$tumor]]) == sample_id]
+    rowSums(detected[, sample_cells, drop = FALSE], na.rm = FALSE)
+  })      
+  write.csv(Genes_detected_A, file=paste(Sys.Date(), "_Number of cells per tumor in which each gene is detected.csv")) 
+
+# Define number of samples in which a gene has to be detected for it to be retained
+  sample.thre <- (Variables$percentDetection * length(samples))/100
+
+# Identify genes detected in every tumor.
+## A gene is considered as detected in a tumor if detected in at least 1 cell from that tumor
+  genes_detected_per_tumor <- Genes_detected_A > 0
+
+  CommonDetectedGenes <- rownames(Genes_detected_A)[rowSums(genes_detected_per_tumor) >= sample.thre]
+
+  write.csv(data.frame(gene = CommonDetectedGenes), file = file.path(Variables$out, paste0(Sys.Date(), "_", Variables$dataset, "_", Variables$analysis_name, "_CommonGenes.csv")), row.names = FALSE)
+
+# Extract the expression matrix containing genes detected in all tumors.
+  data.normCounts <- data.normCounts[rownames(data.normCounts) %in% CommonDetectedGenes$gene,]
+  
+  write.csv(data.normCounts, file = paste0(Sys.Date(), "_", Variables$dataset, "_ExpressionDataOf_", Variables$analysis_name, ".csv")) 
