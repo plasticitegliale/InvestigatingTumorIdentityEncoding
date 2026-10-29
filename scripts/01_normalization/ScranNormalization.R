@@ -7,11 +7,12 @@
 # Output files include the scran-normalized expression matrix, which can be used for grouping analyses.
 
 # Example of command (that generates output files) :
-# Rscript ScranNormalization.R --file ExpressionData.csv --file_sep , --absolute_detection 3 --metacellNorm FALSE --out NormalizedExpressionData_OutputStep5_
+# Rscript ScranNormalization.R --file ExpressionData.csv --file_sep "," --absolute_detection 3 --metacellNorm FALSE --out NormalizedExpressionData_OutputStep5_
 
 # Load necessary packages (install them if it's not the case)
 requiredPackages <- c('optparse', 'scran', 'scater')
 
+BiocManager::install("scran")
 for (p in requiredPackages) {
   if (!require(p, character.only = TRUE)) {
     install.packages(p, repos = "https://cran.univ-paris1.fr/")
