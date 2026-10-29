@@ -30,18 +30,27 @@ library(Hmisc)
 data.normCounts <- read.table(file = Variables$file, sep=Variables$file_sep, header = TRUE, row.names = 1)
 
 # Identify top highly variable genes
-## function from CONICSmat
-detectVarGenes <- function(mat,ngenes=500,FDR=0.00001){
-  var.fit = scran::trendVar(mat)
-  var.out = scran::decomposeVar(mat, var.fit)
+detectVarGenes <- function(mat, ngenes=500, FDR=0.00001){
+  var.out = scran::modelGeneVar(mat)
+
   hvg.out = var.out[which(var.out$FDR <= FDR),]
   hvg.out = hvg.out[order(hvg.out$bio, decreasing=TRUE),]
   genes=rownames(hvg.out)[1:ngenes]
   return(genes)
 }
 
-## Run function
+# Detect highly variable genes
 hvg <- detectVarGenes(mat=as.matrix(data.normCounts), ngenes=Variables$nHVG, FDR = 1e-05)
+
+# Check the number of detected HVGs
+nHVG_available <- length(hvg)
+if (nHVG_available == 0) {
+  stop("No significant highly variable genes were detected at FDR <= 1e-5. Check the input data or reconsider the FDR threshold.")
+}else{
+if (nHVG_available < Variables$nHVG) {
+  warning(paste0("Requested ", Variables$nHVG, " highly variable genes, but only ", nHVG_available, " were returned by detectVarGenes(). Using all available genes.")))
+     }
+}
 
 # Filter expression matrix
 if(Variables$filter == "keep"){
