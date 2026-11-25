@@ -1,3 +1,4 @@
+#####################################################
 ### Identifying highly variable genes using scran ###
 #####################################################
 
@@ -7,7 +8,7 @@
 Variables <- list(
   
   # Path to input file containing normalized expression values. Columns = Observations (Samples, i.e. cells), Rows = Variables (Genes).
-  file= "NormalizedExpressionData_OutputStep3.tsv",
+  file= "../20261016-27_STARprotocolReview/20261026_NewCodes/TestingDifferentDropoutThresholds/NormalizedExpressionData_OutputStep3.tsv",
   
   # Column separator of input file
   file_sep = "\t",
@@ -30,9 +31,9 @@ library(Hmisc)
 data.normCounts <- read.table(file = Variables$file, sep=Variables$file_sep, header = TRUE, row.names = 1)
 
 # Identify top highly variable genes
+## function from CONICSmat
 detectVarGenes <- function(mat, ngenes=500, FDR=0.00001){
   var.out = scran::modelGeneVar(mat)
-
   hvg.out = var.out[which(var.out$FDR <= FDR),]
   hvg.out = hvg.out[order(hvg.out$bio, decreasing=TRUE),]
   genes=rownames(hvg.out)[1:ngenes]
@@ -40,16 +41,17 @@ detectVarGenes <- function(mat, ngenes=500, FDR=0.00001){
 }
 
 # Detect highly variable genes
-hvg <- detectVarGenes(mat=as.matrix(data.normCounts), ngenes=Variables$nHVG, FDR = 1e-05)
+hvg <- detectVarGenes(mat = as.matrix(data.normCounts), ngenes = Variables$nHVG, FDR = 0.00001 )
+hvg <- hvg[is.na(hvg)==FALSE]
 
 # Check the number of detected HVGs
 nHVG_available <- length(hvg)
 if (nHVG_available == 0) {
   stop("No significant highly variable genes were detected at FDR <= 1e-5. Check the input data or reconsider the FDR threshold.")
 }else{
-if (nHVG_available < Variables$nHVG) {
-  warning(paste0("Requested ", Variables$nHVG, " highly variable genes, but only ", nHVG_available, " were returned by detectVarGenes(). Using all available genes.")))
-     }
+  if (nHVG_available < Variables$nHVG) {
+    warning(paste0("Requested ", Variables$nHVG, " highly variable genes, but only ", nHVG_available, " were returned by detectVarGenes(). Using all identified HVG."))
+  }
 }
 
 # Filter expression matrix
