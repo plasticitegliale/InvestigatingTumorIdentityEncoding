@@ -95,6 +95,6 @@ for (p in requiredPackages) {
   write.csv(data.frame(gene = CommonDetectedGenes), file = file.path(Variables$out, paste0(Sys.Date(), "_", Variables$dataset, "_", Variables$analysis_name, "_CommonGenes.csv")), row.names = FALSE)
 
 # Extract the expression matrix containing genes detected in all tumors.
-  data.normCounts <- data.normCounts[rownames(data.normCounts) %in% CommonDetectedGenes$gene,]
+  data.normCounts <- data.normCounts[rownames(data.normCounts) %in% CommonDetectedGenes,]
   
   write.csv(data.normCounts, file = paste0(Sys.Date(), "_", Variables$dataset, "_ExpressionDataOf_", Variables$analysis_name, ".csv")) 
